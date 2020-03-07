@@ -1,0 +1,9 @@
+.grid {
+    
+}
+
+.grid-header {
+    position: relative;
+    will-change: transform;
+    direction: ltr;
+}

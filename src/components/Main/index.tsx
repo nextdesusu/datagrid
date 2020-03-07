@@ -1,7 +1,7 @@
 import * as React from "react";
 
 interface MainProps {
-    children: React.ReactNode | Array<React.ReactNode>,
+    children?: React.ReactNode | Array<React.ReactNode>,
 }
 
 const Main = ({ children }: MainProps ) => {
