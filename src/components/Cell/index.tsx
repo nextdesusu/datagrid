@@ -7,21 +7,21 @@ import "./Cell.css";
 class Cell extends PureComponent<GridChildComponentProps> {
     getComponent(value: string | boolean | number | object) {
         let className: string = "cell-item";
-        let finalValue: string = '';
+        let finalValue: string = "";
         switch(typeof value) {
-            case 'string':
+            case "string":
                 finalValue = value;
                 className = `${className} c-string`;
                 break;
-            case 'number':
+            case "number":
                 finalValue = String(value);
                 className = `${className} c-number`;
                 break;
-            case 'boolean':
-                finalValue = value ? '☑' : '☒';
-                className = `${className} c-boolean b-${value ? 'correct' : 'incorrect'}`;
+            case "boolean":
+                finalValue = value ? "☑" : "☒";
+                className = `${className} c-boolean b-${value ? "correct" : "incorrect"}`;
                 break;
-            case 'object':
+            case "object":
                 finalValue = value.toLocaleString();
                 className = `${className} c-date`;
                 break;
