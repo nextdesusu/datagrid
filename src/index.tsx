@@ -10,7 +10,7 @@ import App from "./components/App";
 import reducer from "./reducer";
 
 const store = createStore(reducer);
-console.log("initial", store.getState())
+console.log("initial", store.getState());
 
 store.subscribe(() => {
     const state = store.getState();

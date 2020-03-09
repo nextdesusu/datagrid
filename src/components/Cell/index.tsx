@@ -5,7 +5,7 @@ import { GridChildComponentProps } from "react-window";
 import "./Cell.css";
 
 class Cell extends PureComponent<GridChildComponentProps> {
-    getComponent(value: string | boolean | number | object) {
+    getComponent(value: any) {
         let className: string = "cell-item";
         let finalValue: string = "";
         switch(typeof value) {
@@ -22,8 +22,13 @@ class Cell extends PureComponent<GridChildComponentProps> {
                 className = `${className} c-boolean b-${value ? "correct" : "incorrect"}`;
                 break;
             case "object":
-                finalValue = value.toLocaleString();
-                className = `${className} c-date`;
+                if (value instanceof Date) {
+                    finalValue = value.toLocaleString();
+                    className = `${className} c-date`;
+                } else {
+                    finalValue = value.type;
+                    className = `${className} job`
+                }
                 break;
         }
         return (<div className={className}>{finalValue}</div>)

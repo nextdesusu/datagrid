@@ -1,15 +1,8 @@
-import { SET_FILTER, INIT_STORE, actionType, filter } from './types';
+import { SET_QUERY_STORE, actionType, QSType } from './types';
 
-export function initStore(size: number): actionType {
+export function setFiltersArray(filters: Array<QSType>): actionType {
     return {
-        type: INIT_STORE,
-        payload: size,
-    }
-}
-
-export function setNewFilter(newFilter: filter): actionType {
-    return {
-        type: SET_FILTER,
-        payload: newFilter,
+        type: SET_QUERY_STORE,
+        payload: filters,
     }
 }

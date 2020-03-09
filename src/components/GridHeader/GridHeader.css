@@ -1,9 +1,17 @@
-.cell-header {
-    position: fixed;
-    left: 0px;
-    top: 0px;
-    text-transform: capitalize;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.grid-header {
+    position: relative;
+    will-change: transform;
+    direction: ltr;
+}
+
+.basic-multi-select {
+    width: 70%;
+}
+
+.grid-header-block1 {
+    z-index: 30;
+}
+
+.grid-header-block2 {
+    z-index: 20;
 }

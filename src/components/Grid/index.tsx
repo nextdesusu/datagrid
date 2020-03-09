@@ -6,6 +6,8 @@ import GridHeader from "../GridHeader";
 import './Grid.css';
 
 interface GridProps {
+  setFilters: (newArray: any) => any;
+  filters: Array<any>;
   data: Array<Array<string | number | boolean | object>>;
   titles: Array<string>;
   width: number;
@@ -13,13 +15,19 @@ interface GridProps {
   rowHeight: number;
 }
 
-const Grid = ({ data, titles, width, height, rowHeight }: GridProps) => {
+const Grid = ({ setFilters, filters, data, titles, width, height, rowHeight }: GridProps) => {
   const rowCount: number = data.length;
   const columnCount: number = data[0].length;
   const columnWidth: number = Math.floor(width / columnCount);
   return (
     <section className="grid">
-      <GridHeader width={columnWidth} height={rowHeight} titles={titles} />
+      <GridHeader
+        width={columnWidth}
+        height={rowHeight}
+        titles={titles}
+        setFilters={setFilters}
+        filters={filters}
+      />
       <FixedSizeGrid
         rowCount={rowCount}
         columnCount={columnCount}

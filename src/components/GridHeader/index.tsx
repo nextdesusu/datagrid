@@ -1,32 +1,67 @@
 import * as React from "react";
 
-import './GridHeader.css';
+import HeaderInput from "../HeaderInput";
+import CellHeader from "../CellHeader";
+import "./GridHeader.css";
 
-interface CellHeaderProps {
-    width: number;
-    height: number;
-    titles: Array<string>
+interface GridHeaderProps {
+  setFilters: (newFilter: any) => any;
+  width: number;
+  height: number;
+  titles: Array<string>;
+  filters: Array<any>;
 }
 
 
+interface option {
+  label: string;
+  value: number;
+}
 
-const CellHeader = ({ width, height, titles }: CellHeaderProps) => {
+class GridHeader extends React.Component<GridHeaderProps> {
+  constructor(props: GridHeaderProps) {
+    super(props);
+    const { filters } = this.props;
+    this.state = {
+      checboxes: filters.map(filter => Boolean(filter))
+    };
+  }
+
+  render() {
+    const { setFilters, width, height, titles } = this.props;
     return (
-    <div className="grid-header" style={{width: width * titles.length, height: height}}>
-        {titles.map((titleText, index) => {
-          const CellTtileKey = `CellTtile ${index}`;
-          return (
-            <div
-                key={CellTtileKey}
-                className="cell-header"
-                style={{width, height, left: width * index}}
-            >
-                <h3>{titleText}</h3>
-            </div>
-          )
-        })}
-    </div>
-    )
+      <div
+        className="grid-header"
+        style={{ width: width * titles.length, height: height * 2 }}
+      >
+        <div className="grid-header-block1" style={{ height }}>
+          <HeaderInput
+            width={4 * width}
+            options={titles.map((title, index) => {
+              const opt: option = {label: title, value: index};
+              return opt;
+            })}
+            height={height}
+          />
+        </div>
+        <div className="grid-header-block2" style={{ height }}>
+          {titles.map((titleText, index) => {
+            const CellTitleKey = `CellTitle: ${index}`;
+            return (
+              <CellHeader
+                key={CellTitleKey}
+                width={width}
+                height={height}
+                leftShift={index * width}
+              >
+                {titleText}
+              </CellHeader>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
 }
 
-export default CellHeader;
+export default GridHeader;

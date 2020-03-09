@@ -1,24 +1,24 @@
-type filterType = string | boolean;
-export const SET_FILTER = "SET_FILTER";
-export const INIT_STORE = "INIT_STORE";
+export interface Job {
+    type: string;
+    id: number;
+}
+
+export type QSType = string | boolean | number;
+
+export const SET_QUERY_STORE = "SET_QUERY_STORE";
 
 export interface filter {
-    index: number;
-    value: filterType;
-}
-
-export interface filterAction {
-    type: typeof SET_FILTER;
-    payload: filter;
-}
-
-export interface initAction {
-    type: typeof INIT_STORE;
-    payload: number;
+    checked: boolean;
+    value: string | boolean;
 }
 
 export interface QueryStore {
-    filters: Array<filterType>;
+    filters: Array<QSType>;
 }
 
-export type actionType = filterAction | initAction;
+interface setFiltersAction {
+    type: typeof SET_QUERY_STORE;
+    payload: Array<QSType>
+}
+
+export type actionType = setFiltersAction;

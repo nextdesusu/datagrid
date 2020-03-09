@@ -1,0 +1,9 @@
+.cell-header {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    text-transform: capitalize;
+    text-align: center;
+    cursor: pointer;
+    background-color: white;
+}
