@@ -1,24 +1,20 @@
 import * as React from "react";
 
-import HeaderInput from "../HeaderInput";
+import { option, title } from "../../types";
+import { HEnum, HBool, HInput } from "../HeaderFilterComponents";
 import CellHeader from "../CellHeader";
 import "./GridHeader.css";
+
 
 interface GridHeaderProps {
   setFilters: (newFilter: any) => any;
   width: number;
   height: number;
-  titles: Array<string>;
+  titles: Array<title>;
   filters: Array<any>;
 }
 
-
-interface option {
-  label: string;
-  value: number;
-}
-
-class GridHeader extends React.Component<GridHeaderProps> {
+class GridHeader extends React.Component< GridHeaderProps> {
   constructor(props: GridHeaderProps) {
     super(props);
     const { filters } = this.props;
@@ -27,26 +23,57 @@ class GridHeader extends React.Component<GridHeaderProps> {
     };
   }
 
+  createHeader(): Array<React.ReactNode> {
+    const { titles, width, height } = this.props;
+    const headerNodes: Array<React.ReactNode> = [];
+    let key: number = 0;
+    let firstIndex: number = 0;
+    let lastIndex: number = 0;
+    for (let {label, componentType, options} of titles) {
+      if (componentType === "text") {
+        lastIndex += 1;
+      } else {
+        const componentKey = `header ${key}`;
+        if (lastIndex > firstIndex) {
+          const options = titles.slice(firstIndex, lastIndex).map((titleItem) => {
+            return {label: titleItem.label, value: titleItem.value};
+          })
+          headerNodes.push(
+            <HInput
+              key={componentKey}
+              options={options}
+              style={{width: width * lastIndex, height}}
+            />
+          );
+          firstIndex = lastIndex;
+        }
+        if (componentType === "enum") {
+          console.log("value", options)
+          headerNodes.push(<HEnum key={componentKey} options={options}/>);
+        } else if (componentType === "boolean") {
+          headerNodes.push(<HBool key={componentKey} options={options}/>);
+        }
+        key += 1;
+      }
+    }
+    return headerNodes;
+  }
+
   render() {
     const { setFilters, width, height, titles } = this.props;
+    const headerNodes: Array<React.ReactNode> = this.createHeader();
     return (
       <div
         className="grid-header"
         style={{ width: width * titles.length, height: height * 2 }}
       >
         <div className="grid-header-block1" style={{ height }}>
-          <HeaderInput
-            width={4 * width}
-            options={titles.map((title, index) => {
-              const opt: option = {label: title, value: index};
-              return opt;
-            })}
-            height={height}
-          />
+          {headerNodes}
         </div>
         <div className="grid-header-block2" style={{ height }}>
-          {titles.map((titleText, index) => {
+          {titles.map((titleItem, index) => {
             const CellTitleKey = `CellTitle: ${index}`;
+            const { label } = titleItem;
             return (
               <CellHeader
                 key={CellTitleKey}
@@ -54,7 +81,7 @@ class GridHeader extends React.Component<GridHeaderProps> {
                 height={height}
                 leftShift={index * width}
               >
-                {titleText}
+                {label}
               </CellHeader>
             );
           })}

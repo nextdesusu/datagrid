@@ -9,7 +9,7 @@ interface GridProps {
   setFilters: (newArray: any) => any;
   filters: Array<any>;
   data: Array<Array<string | number | boolean | object>>;
-  titles: Array<string>;
+  titles: Array<any>;
   width: number;
   height: number;
   rowHeight: number;

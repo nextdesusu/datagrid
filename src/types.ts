@@ -22,3 +22,15 @@ interface setFiltersAction {
 }
 
 export type actionType = setFiltersAction;
+
+export interface option {
+    label: string;
+    value: number;
+}
+
+export interface title {
+    label: string;
+    componentType: string;
+    value?: string | boolean;
+    options?:  Array<any>;
+}

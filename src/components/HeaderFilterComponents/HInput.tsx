@@ -2,16 +2,15 @@ import * as React from "react";
 import Select from "react-select";
 
 interface HeaderInputProps {
-  width: number;
   options: Array<any>;
-  height: number;
+  style: object;
 }
 
-class HeaderInput extends React.Component<HeaderInputProps> {
+class HInput extends React.Component<HeaderInputProps> {
   render() {
-    const { options, width, height } = this.props;
+    const { options, style } = this.props;
     return (
-      <div style={{ width, height }}>
+      <div style={style}>
         <Select
           isMulti
           name="colors"
@@ -24,4 +23,4 @@ class HeaderInput extends React.Component<HeaderInputProps> {
   }
 }
 
-export default HeaderInput;
+export default HInput;
