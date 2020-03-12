@@ -1,94 +1,104 @@
 import * as React from "react";
+import { connect, ConnectedProps } from "react-redux";
 
-import { option, title } from "../../types";
-import { HEnum, HBool, HInput } from "../HeaderFilterComponents";
+import { changeFilterById } from "../../actions";
+import { title, Filter, filterValue, QueryStore, } from "../../types";
 import CellHeader from "../CellHeader";
 import "./GridHeader.css";
 
+const mapState = (state: QueryStore) => ({
+  filters: state.filters
+});
 
-interface GridHeaderProps {
-  setFilters: (newFilter: any) => any;
+const mapDispatch = {
+  setFilter: (id: number, filter: Filter) => changeFilterById(id, filter),
+};
+
+const connector = connect(mapState, mapDispatch);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+type Props = PropsFromRedux & {
   width: number;
   height: number;
   titles: Array<title>;
-  filters: Array<any>;
 }
 
-class GridHeader extends React.Component< GridHeaderProps> {
-  constructor(props: GridHeaderProps) {
-    super(props);
-    const { filters } = this.props;
-    this.state = {
-      checboxes: filters.map(filter => Boolean(filter))
-    };
+class GridHeader extends React.Component<Props> {
+
+  onClickHandler = (event: React.MouseEvent): void => {
+    event.preventDefault();
+    //Close all here!
+    const target = event.target as Element;
+    let div: null | Element = null;
+    if (target.hasAttribute("data-cell-parent")) {
+      div = target;
+    } else if (target.parentElement?.hasAttribute("data-cell-parent")) {
+      div = target.parentElement;
+    } else {
+      return;
+    }
+    const childNodes: NodeListOf<ChildNode> = div?.childNodes;
+    const inner: Element = childNodes[childNodes.length - 1] as Element;
+    inner.classList.toggle("non-visible");
+    const id: number = Number(div.getAttribute("data-cell-id"));
+    const { setFilter, filters } = this.props;
+    const newFilter = filters[id];
+    newFilter.switchedOn = !newFilter.switchedOn;
+    setFilter(id, newFilter);
   }
 
-  createHeader(): Array<React.ReactNode> {
-    const { titles, width, height } = this.props;
-    const headerNodes: Array<React.ReactNode> = [];
-    let key: number = 0;
-    let firstIndex: number = 0;
-    let lastIndex: number = 0;
-    for (let {label, componentType, options} of titles) {
-      if (componentType === "text") {
-        lastIndex += 1;
-      } else {
-        const componentKey = `header ${key}`;
-        if (lastIndex > firstIndex) {
-          const options = titles.slice(firstIndex, lastIndex).map((titleItem) => {
-            return {label: titleItem.label, value: titleItem.value};
-          })
-          headerNodes.push(
-            <HInput
-              key={componentKey}
-              options={options}
-              style={{width: width * lastIndex, height}}
-            />
-          );
-          firstIndex = lastIndex;
-        }
-        if (componentType === "enum") {
-          console.log("value", options)
-          headerNodes.push(<HEnum key={componentKey} options={options}/>);
-        } else if (componentType === "boolean") {
-          headerNodes.push(<HBool key={componentKey} options={options}/>);
-        }
-        key += 1;
-      }
+  onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const target: HTMLInputElement = event.target as HTMLInputElement;
+    const componentType = target.getAttribute("data-cell-input-type");
+    const id: number = Number(target.getAttribute("data-cell-input-id"));
+    const { value } = target; 
+    let finalValue: filterValue;
+    switch(componentType) {
+      case "text":
+        finalValue = value;
+        break;
+      case "enum":
+        finalValue = Number(value);
+        break;
+      case "boolean":
+        finalValue = !id;
+        break;
+      default:
+        return;
     }
-    return headerNodes;
+
   }
 
   render() {
-    const { setFilters, width, height, titles } = this.props;
-    const headerNodes: Array<React.ReactNode> = this.createHeader();
+    const { width, height, titles, filters } = this.props;
+    console.log("got filters:", filters);
     return (
       <div
         className="grid-header"
         style={{ width: width * titles.length, height: height * 2 }}
+        onClick={this.onClickHandler}
+        onChange={this.onChangeHandler}
       >
-        <div className="grid-header-block1" style={{ height }}>
-          {headerNodes}
-        </div>
-        <div className="grid-header-block2" style={{ height }}>
-          {titles.map((titleItem, index) => {
-            const CellTitleKey = `CellTitle: ${index}`;
-            const { label } = titleItem;
-            return (
-              <CellHeader
-                key={CellTitleKey}
-                width={width}
-                height={height}
-                leftShift={index * width}
-              >
-                {label}
-              </CellHeader>
-            );
-          })}
-        </div>
+        {titles.map(({label, componentType, options }, index) => {
+          const CellTitleKey = `CellTitle: ${index}`;
+          const fState = filters[index];
+          return (
+            <CellHeader
+              style={{width, height, left: index * width, top: height}}
+              id={index}
+              key={CellTitleKey}
+              componentType={componentType}
+              options={options}
+              state={fState}
+            >
+              {label}
+            </CellHeader>
+          );
+        })}
       </div>
     );
   }
 }
 
-export default GridHeader;
+export default connector(GridHeader);

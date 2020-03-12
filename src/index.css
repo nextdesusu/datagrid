@@ -16,4 +16,14 @@ code {
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 2000px;
+}
+
+input, button {
+  padding: 0;
+  margin: 0;
+}
+
+.non-visible {
+  display: none;
 }

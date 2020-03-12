@@ -3,26 +3,6 @@ export interface Job {
     id: number;
 }
 
-export type QSType = string | boolean | number;
-
-export const SET_QUERY_STORE = "SET_QUERY_STORE";
-
-export interface filter {
-    checked: boolean;
-    value: string | boolean;
-}
-
-export interface QueryStore {
-    filters: Array<QSType>;
-}
-
-interface setFiltersAction {
-    type: typeof SET_QUERY_STORE;
-    payload: Array<QSType>
-}
-
-export type actionType = setFiltersAction;
-
 export interface option {
     label: string;
     value: number;
@@ -31,6 +11,38 @@ export interface option {
 export interface title {
     label: string;
     componentType: string;
-    value?: string | boolean;
     options?:  Array<any>;
 }
+
+export type MouseEventHandler = (event: React.MouseEvent) => void;
+
+export type filterValue = string | boolean | number;
+
+export const SET_QUERY_STORE = "SET_QUERY_STORE";
+export const CHANGE_FILTER_BY_ID = "CHANGE_FILTER_BY_ID";
+
+export interface Filter {
+    switchedOn: boolean;
+    value: filterValue;
+}
+
+export interface FilterWithId {
+    id: number;
+    value: Filter;
+}
+
+export interface QueryStore {
+    filters: Array<Filter>;
+}
+
+interface changeFilterAction {
+    type: typeof CHANGE_FILTER_BY_ID;
+    payload: FilterWithId;
+}
+
+interface setFiltersAction {
+    type: typeof SET_QUERY_STORE;
+    payload: Array<Filter>
+}
+
+export type actionType = setFiltersAction | changeFilterAction;

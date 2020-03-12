@@ -9,11 +9,11 @@ export const JOBS: Array<Job> = [
 ];
 
 export const titleList: Array<title> = [
-    { label: "name", value: "name", componentType: "text" },
-    { label: "country", value: "country", componentType: "text" },
-    { label: "phone number", value: "phone number", componentType: "text" },
-    { label: "updated", value: "updated", componentType: "text" },
-    { label: "years of expirience", value: "years of expirience", componentType: "text" },
+    { label: "name", componentType: "text" },
+    { label: "country", componentType: "text" },
+    { label: "phone number", componentType: "text" },
+    { label: "updated", componentType: "text" },
+    { label: "years of expirience", componentType: "text" },
     { label: "job type", options: JOBS, componentType: "enum" },
-    { label: "contacted", options: [true, false], componentType: "boolean" },
+    { label: "contacted", componentType: "boolean" },
 ];
