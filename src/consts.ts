@@ -1,6 +1,7 @@
 import { Job, title } from './types';
 
-export const COLUMNS = 1500;
+export const ROWS = 1500;
+export const COLUMNS = 7;
 
 export const JOBS: Array<Job> = [
     { type: "coordinator", id: 0 },

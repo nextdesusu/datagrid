@@ -16,13 +16,18 @@ export interface title {
 
 export type MouseEventHandler = (event: React.MouseEvent) => void;
 
-export type filterValue = string | boolean | number;
+
+export type dataValue = string | object | boolean | number;
+
+export type filterValue = string | boolean | number | null;
 
 export const SET_QUERY_STORE = "SET_QUERY_STORE";
 export const CHANGE_FILTER_BY_ID = "CHANGE_FILTER_BY_ID";
 
 export interface Filter {
     switchedOn: boolean;
+    type: string;
+    id: number;
     value: filterValue;
 }
 

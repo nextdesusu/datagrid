@@ -12,11 +12,11 @@ interface GridProps {
   width: number;
   height: number;
   rowHeight: number;
+  columnCount: number;
 }
 
-const Grid = ({ data, titles, width, height, rowHeight }: GridProps) => {
+const Grid = ({ data, titles, width, height, rowHeight, columnCount }: GridProps) => {
   const rowCount: number = data.length;
-  const columnCount: number = data[0].length;
   const columnWidth: number = Math.floor(width / columnCount);
   return (
     <section className="grid">

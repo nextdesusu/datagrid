@@ -49,30 +49,32 @@ class GridHeader extends React.Component<Props> {
   }
 
   onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { setFilter, filters } = this.props;
     const target: HTMLInputElement = event.target as HTMLInputElement;
     const componentType = target.getAttribute("data-cell-input-type");
     const id: number = Number(target.getAttribute("data-cell-input-id"));
-    const { value } = target; 
+    const { value } = target;
+    const newFilter = filters[id];
     let finalValue: filterValue;
     switch(componentType) {
       case "text":
-        finalValue = value;
+        finalValue = value.toLowerCase();
         break;
       case "enum":
         finalValue = Number(value);
         break;
       case "boolean":
-        finalValue = !id;
+        finalValue = !newFilter.value;
         break;
       default:
         return;
     }
-
+    newFilter.value = finalValue;
+    setFilter(id, newFilter);
   }
 
   render() {
     const { width, height, titles, filters } = this.props;
-    console.log("got filters:", filters);
     return (
       <div
         className="grid-header"

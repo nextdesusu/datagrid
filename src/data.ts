@@ -1,9 +1,9 @@
 import Faker from "faker";
-import { COLUMNS, JOBS } from "./consts";
+import { ROWS, JOBS } from "./consts";
 
 type column = string | number | object | boolean;
 
-const data: Array<Array<column>> = new Array(COLUMNS);
+const data: Array<Array<column>> = new Array(10);
 
 for (let i: number = 0; i < data.length; i++) {
     data[i] = [
