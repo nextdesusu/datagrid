@@ -2,18 +2,18 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Provider } from 'react-redux'
 import { createStore } from "redux";
-
 import * as serviceWorker from "./serviceWorker";
-import "./index.css";
-import App from "./components/App";
 
+import { LSsave } from "./localStorage";
+import App from "./components/App";
 import reducer from "./reducer";
+import "./index.css";
 
 const store = createStore(reducer);
-console.log("initial", store.getState());
 
 store.subscribe(() => {
     const state = store.getState();
+    LSsave(state);
     console.log("state:", state);
 });
 

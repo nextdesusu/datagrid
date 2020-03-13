@@ -13,8 +13,10 @@ export const titleList: Array<title> = [
     { label: "name", componentType: "text" },
     { label: "country", componentType: "text" },
     { label: "phone number", componentType: "text" },
-    { label: "updated", componentType: "text" },
-    { label: "years of expirience", componentType: "text" },
+    { label: "updated", componentType: "date" },
+    { label: "years of expirience", componentType: "number" },
     { label: "job type", options: JOBS, componentType: "enum" },
     { label: "contacted", componentType: "boolean" },
 ];
+
+export const LOCAL_STORAGE_STATE = "LOCAL_STORAGE_STATE";

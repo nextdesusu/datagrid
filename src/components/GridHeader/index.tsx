@@ -38,9 +38,6 @@ class GridHeader extends React.Component<Props> {
     } else {
       return;
     }
-    const childNodes: NodeListOf<ChildNode> = div?.childNodes;
-    const inner: Element = childNodes[childNodes.length - 1] as Element;
-    inner.classList.toggle("non-visible");
     const id: number = Number(div.getAttribute("data-cell-id"));
     const { setFilter, filters } = this.props;
     const newFilter = filters[id];
@@ -63,8 +60,14 @@ class GridHeader extends React.Component<Props> {
       case "enum":
         finalValue = Number(value);
         break;
+      case "number":
+        finalValue = Number(value);
+        break;
       case "boolean":
-        finalValue = !newFilter.value;
+        finalValue = value === "true";
+        break;
+      case "date":
+        finalValue = value.toLowerCase();
         break;
       default:
         return;

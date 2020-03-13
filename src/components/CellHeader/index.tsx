@@ -19,27 +19,21 @@ const getInputComponent = (
   state?: Filter
 ) => {
   switch (componentType) {
-    case "text":
-      return (
-        <input
-          data-cell-input-type={componentType}
-          data-cell-input-id={id}
-          className="cell-header-input"
-          defaultValue={state?.value as string || ""}
-        />
-      );
     case "enum":
+      const selected = String(state?.value as string || "0");
       return (
         <select
           data-cell-input-type={componentType}
           data-cell-input-id={id}
           className="cell-header-input"
-          defaultValue={state?.value as number || 0}
+          value={selected}
+          onChange={() => {}}
         >
           {options?.map(({ type, id }, index) => {
             const key = `option ${index}`;
+            const value: string = String(id);
             return (
-              <option key={key} value={id}>
+              <option key={key} value={value}>
                 {type}
               </option>
             );
@@ -47,12 +41,14 @@ const getInputComponent = (
         </select>
       );
     case "boolean":
+      const bSelected: string = state?.value ? "true" : "false";
       return (
         <select
           data-cell-input-type={componentType}
           data-cell-input-id={id}
           className="cell-header-input"
-          defaultValue={state?.value as string || ""}
+          value={bSelected}
+          onChange={() => {}}
         >
           <option value={"false"}>
             false
@@ -63,7 +59,14 @@ const getInputComponent = (
         </select>
       );
     default:
-      throw Error(`Unknown component type: ${componentType}`);
+      return (
+        <input
+          data-cell-input-type={componentType}
+          data-cell-input-id={id}
+          className="cell-header-input"
+          defaultValue={state?.value as string || ""}
+        />
+      );
   }
 };
 
@@ -78,7 +81,7 @@ const CellHeader = ({
   return (
     <div data-cell-parent data-cell-id={id} className="cell-header" style={style}>
       <span>{children}</span>
-      <div className="cell-header-inner non-visible">
+      <div className={`cell-header-inner ${state?.switchedOn ? "" : "non-visible"}`}>
         {getInputComponent(componentType, id, options, state)}
       </div>
     </div>
