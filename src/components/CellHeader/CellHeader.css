@@ -7,4 +7,9 @@
     cursor: pointer;
     background-color: white;
     display: grid;
+    background-color: rgba(128, 128, 128, 0.5);
+}
+
+.cell-header-input {
+    width: 80%;
 }

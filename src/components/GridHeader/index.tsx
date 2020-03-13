@@ -2,7 +2,7 @@ import * as React from "react";
 import { connect, ConnectedProps } from "react-redux";
 
 import { changeFilterById } from "../../actions";
-import { title, Filter, filterValue, QueryStore, } from "../../types";
+import { title, Filter, filterValue, QueryStore } from "../../types";
 import CellHeader from "../CellHeader";
 import "./GridHeader.css";
 
@@ -11,7 +11,7 @@ const mapState = (state: QueryStore) => ({
 });
 
 const mapDispatch = {
-  setFilter: (id: number, filter: Filter) => changeFilterById(id, filter),
+  setFilter: (id: number, filter: Filter) => changeFilterById(id, filter)
 };
 
 const connector = connect(mapState, mapDispatch);
@@ -22,28 +22,29 @@ type Props = PropsFromRedux & {
   width: number;
   height: number;
   titles: Array<title>;
-}
+};
 
 class GridHeader extends React.Component<Props> {
-
   onClickHandler = (event: React.MouseEvent): void => {
     event.preventDefault();
     //Close all here!
     const target = event.target as Element;
-    let div: null | Element = null;
-    if (target.hasAttribute("data-cell-parent")) {
-      div = target;
-    } else if (target.parentElement?.hasAttribute("data-cell-parent")) {
-      div = target.parentElement;
-    } else {
+    if (
+      target.hasAttribute("data-cell-input-type") ||
+      target.hasAttribute("data-cell-checkbox")
+    )
       return;
+    let div: Element | null | undefined = target;
+    while (!div?.hasAttribute("data-cell-parent")) {
+      if (div?.hasAttribute("data-final-parent")) return;
+      div = div?.parentElement;
     }
-    const id: number = Number(div.getAttribute("data-cell-id"));
+    const id: number = Number(div?.getAttribute("data-cell-id"));
     const { setFilter, filters } = this.props;
     const newFilter = filters[id];
     newFilter.switchedOn = !newFilter.switchedOn;
     setFilter(id, newFilter);
-  }
+  };
 
   onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { setFilter, filters } = this.props;
@@ -53,7 +54,7 @@ class GridHeader extends React.Component<Props> {
     const { value } = target;
     const newFilter = filters[id];
     let finalValue: filterValue;
-    switch(componentType) {
+    switch (componentType) {
       case "text":
         finalValue = value.toLowerCase();
         break;
@@ -74,7 +75,7 @@ class GridHeader extends React.Component<Props> {
     }
     newFilter.value = finalValue;
     setFilter(id, newFilter);
-  }
+  };
 
   render() {
     const { width, height, titles, filters } = this.props;
@@ -84,13 +85,14 @@ class GridHeader extends React.Component<Props> {
         style={{ width: width * titles.length, height: height * 2 }}
         onClick={this.onClickHandler}
         onChange={this.onChangeHandler}
+        data-final-parent
       >
-        {titles.map(({label, componentType, options }, index) => {
+        {titles.map(({ label, componentType, options }, index) => {
           const CellTitleKey = `CellTitle: ${index}`;
           const fState = filters[index];
           return (
             <CellHeader
-              style={{width, height, left: index * width, top: height}}
+              style={{ width, height, left: index * width, top: height }}
               id={index}
               key={CellTitleKey}
               componentType={componentType}

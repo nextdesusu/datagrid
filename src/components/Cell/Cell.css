@@ -11,14 +11,22 @@
     justify-content: center;
 }
 
+.cell-first {
+    border-right: 1px solid black;
+}
+
+.c-title {
+    position: fixed;
+}
+
 .c-boolean {
     
 }
 
-.b-correct {
+.b-positive {
     color: rgb(11, 90, 11);
 }
 
-.b-incorrect {
+.b-negative {
     color: rgb(156, 13, 13);
 }

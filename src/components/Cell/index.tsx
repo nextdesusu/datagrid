@@ -19,7 +19,7 @@ class Cell extends PureComponent<GridChildComponentProps> {
                 break;
             case "boolean":
                 finalValue = value ? "☑" : "☒";
-                className = `${className} c-boolean b-${value ? "correct" : "incorrect"}`;
+                className = `${className} c-boolean b-${value ? "positive" : "negative"}`;
                 break;
             case "object":
                 if (value instanceof Date) {
@@ -27,17 +27,19 @@ class Cell extends PureComponent<GridChildComponentProps> {
                     className = `${className} c-date`;
                 } else {
                     finalValue = value.type;
-                    className = `${className} job`
+                    className = `${className} c-job`
                 }
                 break;
         }
         return (<div className={className}>{finalValue}</div>)
     }
+    
     render() {
         const { columnIndex, rowIndex, data, style } = this.props;
         const value = data[rowIndex][columnIndex];
+        const firstCell: boolean = columnIndex === 0;
         return (
-            <div className="cell-wrapper" style={style}>
+            <div className={`cell-wrapper ${firstCell ? "cell-first" : ""}`} style={style}>
                 {this.getComponent(value)}
             </div>
         )

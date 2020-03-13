@@ -20,7 +20,7 @@ const getInputComponent = (
 ) => {
   switch (componentType) {
     case "enum":
-      const selected = String(state?.value as string || "0");
+      const selected = String((state?.value as string) || "0");
       return (
         <select
           data-cell-input-type={componentType}
@@ -50,12 +50,8 @@ const getInputComponent = (
           value={bSelected}
           onChange={() => {}}
         >
-          <option value={"false"}>
-            false
-          </option>
-          <option value={"true"}>
-            true
-          </option>
+          <option value={"false"}>false</option>
+          <option value={"true"}>true</option>
         </select>
       );
     default:
@@ -64,7 +60,7 @@ const getInputComponent = (
           data-cell-input-type={componentType}
           data-cell-input-id={id}
           className="cell-header-input"
-          defaultValue={state?.value as string || ""}
+          defaultValue={(state?.value as string) || ""}
         />
       );
   }
@@ -79,9 +75,23 @@ const CellHeader = ({
   state
 }: CellHeaderProps) => {
   return (
-    <div data-cell-parent data-cell-id={id} className="cell-header" style={style}>
-      <span>{children}</span>
-      <div className={`cell-header-inner ${state?.switchedOn ? "" : "non-visible"}`}>
+    <div
+      data-cell-parent
+      data-cell-id={id}
+      className="cell-header"
+      style={style}
+    >
+      <div>
+        <label>
+          <input data-cell-checkbox type="checkbox" checked={true} />
+        </label>
+        <span>{children}</span>
+      </div>
+      <div
+        className={`cell-header-inner ${
+          state?.switchedOn ? "" : "non-visible"
+        }`}
+      >
         {getInputComponent(componentType, id, options, state)}
       </div>
     </div>

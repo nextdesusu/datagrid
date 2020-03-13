@@ -16,7 +16,6 @@ export interface title {
 
 export type MouseEventHandler = (event: React.MouseEvent) => void;
 
-
 export type dataValue = string | object | boolean | number;
 
 export type filterValue = string | boolean | number | null;
@@ -38,6 +37,8 @@ export interface FilterWithId {
 
 export interface QueryStore {
     filters: Array<Filter>;
+    sorters: Array<Boolean>;
+    sortPredicate: boolean;
 }
 
 interface changeFilterAction {

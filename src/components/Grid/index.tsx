@@ -19,7 +19,7 @@ const Grid = ({ data, titles, width, height, rowHeight, columnCount }: GridProps
   const rowCount: number = data.length;
   const columnWidth: number = Math.floor(width / columnCount);
   return (
-    <section className="grid">
+    <section className="grid-wrapper">
       <GridHeader
         width={columnWidth}
         height={rowHeight}
@@ -33,6 +33,7 @@ const Grid = ({ data, titles, width, height, rowHeight, columnCount }: GridProps
         columnWidth={columnWidth}
         rowHeight={rowHeight}
         itemData={data}
+        className="grid"
       >
         {Cell}
       </FixedSizeGrid>

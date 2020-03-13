@@ -28,7 +28,6 @@ class App extends React.Component<PropsFromRedux> {
     const loadedFilters: Array<Filter> | null = LSload();
     console.log(loadedFilters.length, '===', titleList.length)
     if (loadedFilters?.length === titleList.length) {
-      console.log("loading...")
       setFilters(loadedFilters);
     } else {
       const filtersArray = titleList.map(
@@ -87,11 +86,22 @@ class App extends React.Component<PropsFromRedux> {
     return true;
   }
 
-  get filteredGridData(): Array<Array<dataValue>> {
+  filterGridData(gridData: Array<Array<dataValue>>, activeFilters: Array<Filter>): Array<Array<dataValue>> {
     const { filters } = this.props;
-    const activeFilters = filters.filter(filterItem => filterItem.switchedOn);
+    return gridData.filter(dataRow => this.isValid(activeFilters, dataRow));
+  }
+
+  sortGridData(gridData: Array<Array<dataValue>>) {
+    return gridData;
+  }
+
+  get handledGridData(): Array<Array<dataValue>> {
+    const { filters } = this.props;
+    const activeFilters: Array<Filter> = filters.filter(filterItem => filterItem.switchedOn);
     if (activeFilters.length === 0) return data;
-    return data.filter(dataRow => this.isValid(activeFilters, dataRow));
+    const filteredData: Array<Array<dataValue>> = this.filterGridData(data, activeFilters);
+    const sortedData: Array<Array<dataValue>> = this.sortGridData(filteredData);
+    return sortedData;
   }
 
   render() {
@@ -103,7 +113,7 @@ class App extends React.Component<PropsFromRedux> {
         <Header>list of employees</Header>
         <Main>
           <Grid
-            data={this.filteredGridData}
+            data={this.handledGridData}
             titles={titleList}
             width={width}
             height={height}
