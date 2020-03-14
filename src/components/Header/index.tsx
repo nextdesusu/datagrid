@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import "./Header.css";
+
 interface HeaderProps {
     children: string,
 }
@@ -7,7 +9,7 @@ interface HeaderProps {
 const Header = ({ children }: HeaderProps ) => {
     return (
         <header>
-            <h1>{children}</h1>
+            <h1 className="main-header">{children}</h1>
         </header>
     )
 }

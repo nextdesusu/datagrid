@@ -16,7 +16,7 @@ export const titleList: Array<title> = [
     { label: "updated", componentType: "date" },
     { label: "years of work", componentType: "number" },
     { label: "job type", options: JOBS, componentType: "enum" },
-    { label: "contacted", componentType: "boolean" },
+    { label: "contacted", componentType: "bool" },
 ];
 
 export const LOCAL_STORAGE_STATE = "LOCAL_STORAGE_STATE";

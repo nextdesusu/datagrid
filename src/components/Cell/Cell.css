@@ -1,5 +1,6 @@
 .cell-wrapper {
     border-bottom: 1px solid black;
+    z-index: 1;
 }
 
 .cell-item {
@@ -9,10 +10,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 0.8em;
+    text-align: center;
+    z-index: 1;
 }
 
 .cell-first {
-    border-right: 1px solid black;
+    
 }
 
 .c-title {

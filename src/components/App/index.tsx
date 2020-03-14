@@ -45,7 +45,7 @@ class App extends React.Component<PropsFromRedux> {
             case "date":
               filterItem.value = "";
               break;
-            case "boolean":
+            case "bool":
               filterItem.value = false;
               break;
             case "number":

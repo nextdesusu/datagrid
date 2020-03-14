@@ -1,10 +1,12 @@
 import * as React from "react";
 import { connect, ConnectedProps } from "react-redux";
+import Select from "react-select";
 
 import { changeFilterById } from "../../actions";
-import { title, Filter, filterValue, QueryStore } from "../../types";
-import CellHeader from "../CellHeader";
+import { title, Filter, filterValue, QueryStore, option } from "../../types";
+import GridHeaderCell from "../GridHeaderCell";
 import "./GridHeader.css";
+import { FixedSizeGrid } from "react-window";
 
 const mapState = (state: QueryStore) => ({
   filters: state.filters
@@ -25,23 +27,38 @@ type Props = PropsFromRedux & {
 };
 
 class GridHeader extends React.Component<Props> {
+
   onClickHandler = (event: React.MouseEvent): void => {
+    console.log("click");
     event.preventDefault();
     //Close all here!
     const target = event.target as Element;
+    const inputType = target.getAttribute("data-cell-input-type");
+    if (inputType === "bool") {
+      const id: number = Number(target.getAttribute("data-cell-input-id"));
+      const { setFilter, filters } = this.props;
+      const newFilter = filters[id];
+      newFilter.value = !newFilter.value;
+      setFilter(id, newFilter);
+    }
     if (
-      target.hasAttribute("data-cell-input-type") ||
+      inputType !== null ||
       target.hasAttribute("data-cell-checkbox")
     )
       return;
+    let stop: number = 0;
+    const maxStep: number = 20;
     let div: Element | null | undefined = target;
     while (!div?.hasAttribute("data-cell-parent")) {
+      stop += 1;
       if (div?.hasAttribute("data-final-parent")) return;
       div = div?.parentElement;
+      if (stop > maxStep) break;
     }
     const id: number = Number(div?.getAttribute("data-cell-id"));
     const { setFilter, filters } = this.props;
-    const newFilter = filters[id];
+    const newFilter: Filter | undefined = filters[id];
+    if (newFilter === undefined) return;
     newFilter.switchedOn = !newFilter.switchedOn;
     setFilter(id, newFilter);
   };
@@ -65,8 +82,7 @@ class GridHeader extends React.Component<Props> {
         finalValue = Number(value);
         break;
       case "boolean":
-        finalValue = value === "true";
-        break;
+        return;
       case "date":
         finalValue = value.toLowerCase();
         break;
@@ -77,32 +93,65 @@ class GridHeader extends React.Component<Props> {
     setFilter(id, newFilter);
   };
 
+  sortersHanler = (optionsList: any) => {
+    console.log(optionsList);
+  };
+
+  filtersHandler = (optionsList: any) => {
+    console.log(optionsList);
+  };
+
+  get options(): Array<option> {
+    const { titles } = this.props;
+    return titles.map(({ label }: title, index) => ({
+      label,
+      value: index
+    }));
+  }
+
   render() {
     const { width, height, titles, filters } = this.props;
+    const options = this.options;
+    const blockWidth: number = width * titles.length;
     return (
       <div
         className="grid-header"
-        style={{ width: width * titles.length, height: height * 2 }}
+        style={{ width: blockWidth, height: height * 2 }}
         onClick={this.onClickHandler}
         onChange={this.onChangeHandler}
-        data-final-parent
       >
-        {titles.map(({ label, componentType, options }, index) => {
-          const CellTitleKey = `CellTitle: ${index}`;
-          const fState = filters[index];
-          return (
-            <CellHeader
-              style={{ width, height, left: index * width, top: height }}
-              id={index}
-              key={CellTitleKey}
-              componentType={componentType}
-              options={options}
-              state={fState}
-            >
-              {label}
-            </CellHeader>
-          );
-        })}
+        <div className="grid-header-sort__block">
+          <Select
+            isMulti
+            name="colors"
+            options={options}
+            onChange={this.sortersHanler}
+            placeholder="Sort by..."
+            className="basic-multi-select"
+            classNamePrefix="select"
+          />
+        </div>
+        <div
+          className="grid-header-items"
+          style={{ top: height, width: blockWidth, height }}
+        >
+          {titles.map(({ label, componentType, options }: title, index: number) => {
+            const key = `hc: ${index}`;
+            const filter = filters[index];
+            return (
+              <GridHeaderCell
+                key={key}
+                style={{left: width * index, width, height, top: height}}
+                componentType={componentType}
+                id={index}
+                state={filter}
+                options={options}
+              >
+                {label}
+              </GridHeaderCell>
+            );
+          })}
+        </div>
       </div>
     );
   }

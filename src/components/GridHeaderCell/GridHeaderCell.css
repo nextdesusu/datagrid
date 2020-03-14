@@ -8,6 +8,7 @@
     background-color: white;
     display: grid;
     background-color: rgba(128, 128, 128, 0.5);
+    z-index: 1;
 }
 
 .cell-header-input {

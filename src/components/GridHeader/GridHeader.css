@@ -1,14 +1,13 @@
 .grid-header {
-    position: relative;
-    will-change: transform;
-    direction: ltr;
-    width: 100%;
+  position: relative;
+  will-change: transform;
+  direction: ltr;
+  width: 100%;
+  position: relative; z-index: 1000;
 }
 
-.grid-header-block1 {
-    z-index: 30;
-}
-
-.grid-header-block2 {
-    z-index: 20;
+.grid-header-items {
+  position: fixed;
+  top: 0;
+  left: 0;
 }
