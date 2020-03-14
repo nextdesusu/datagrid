@@ -4,18 +4,20 @@ import { connect, ConnectedProps } from "react-redux";
 import { LSload } from "../../localStorage";
 import data from "../../data";
 import { titleList, COLUMNS } from "../../consts";
-import { QueryStore, Filter, dataValue } from "../../types";
-import { setFiltersArray } from "../../actions";
+import { QueryStore, Filter, dataValue, sortersArray } from "../../types";
+import { setFiltersArray, setSortersArray } from "../../actions";
 import Header from "../Header";
 import Main from "../Main";
 import Grid from "../Grid";
 
 const mapState = (state: QueryStore) => ({
-  filters: state.filters
+  filters: state.filters,
+  sorters: state.sorters
 });
 
 const mapDispatch = {
-  setFilters: (newArray: Array<Filter>) => setFiltersArray(newArray)
+  setFilters: (newArray: Array<Filter>) => setFiltersArray(newArray),
+  setSorters: (sorters: sortersArray) => setSortersArray(sorters)
 };
 
 const connector = connect(mapState, mapDispatch);
@@ -24,12 +26,11 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 class App extends React.Component<PropsFromRedux> {
   componentDidMount() {
-    const { setFilters } = this.props;
+    const { setFilters, setSorters } = this.props;
     const loadedFilters: Array<Filter> | null = LSload();
-    console.log(loadedFilters.length, '===', titleList.length)
-    if (loadedFilters?.length === titleList.length) {
-      setFilters(loadedFilters);
+    if (false) {
     } else {
+      const sorters = titleList.map(() => false);
       const filtersArray = titleList.map(
         ({ componentType }, index): Filter => {
           const filterItem: Filter = {
@@ -60,7 +61,8 @@ class App extends React.Component<PropsFromRedux> {
           return filterItem;
         }
       );
-      setFilters(filtersArray); 
+      setSorters(sorters);
+      setFilters(filtersArray);
     }
   }
 
@@ -76,7 +78,11 @@ class App extends React.Component<PropsFromRedux> {
           valid = value === rowItem.id;
           break;
         case "date":
-          valid = rowItem.toString().toLowerCase().indexOf(value) !== -1;
+          valid =
+            rowItem
+              .toString()
+              .toLowerCase()
+              .indexOf(value) !== -1;
           break;
         default:
           valid = value === rowItem;
@@ -86,22 +92,48 @@ class App extends React.Component<PropsFromRedux> {
     return true;
   }
 
-  filterGridData(gridData: Array<Array<dataValue>>, activeFilters: Array<Filter>): Array<Array<dataValue>> {
-    const { filters } = this.props;
+  filterGridData(
+    gridData: Array<Array<dataValue>>,
+    activeFilters: Array<Filter>
+  ): Array<Array<dataValue>> {
     return gridData.filter(dataRow => this.isValid(activeFilters, dataRow));
   }
 
-  sortGridData(gridData: Array<Array<dataValue>>) {
-    return gridData;
+  sortGridData(gridData: Array<Array<dataValue>>, activeSorters: any) {
+    //const compareFunction = () => true;
+    return gridData.sort(
+      (prevRow: Array<dataValue>, currentRow: Array<dataValue>) => {
+        const sum: Array<number> = [];
+        for (let srtNumber of activeSorters) {
+          sum.push(prevRow[srtNumber] > currentRow[srtNumber] ? 1 : -1);
+        }
+        return sum.reduce((prev: number, current: number) => prev - current, 0);
+      }
+    );
   }
 
   get handledGridData(): Array<Array<dataValue>> {
-    const { filters } = this.props;
-    const activeFilters: Array<Filter> = filters.filter(filterItem => filterItem.switchedOn);
-    if (activeFilters.length === 0) return data;
-    const filteredData: Array<Array<dataValue>> = this.filterGridData(data, activeFilters);
-    const sortedData: Array<Array<dataValue>> = this.sortGridData(filteredData);
-    return sortedData;
+    const { filters, sorters } = this.props;
+    let handledData: Array<Array<dataValue>> = data;
+
+    const activeFilters: Array<Filter> = filters.filter(
+      filterItem => filterItem.switchedOn
+    );
+
+    const activeSorters = new Set();
+    sorters.forEach((value: boolean, index: number) => {
+      if (value) activeSorters.add(index);
+    });
+
+    if (activeFilters.length > 0) {
+      handledData = this.filterGridData(data, activeFilters);
+      console.log("filtered:", handledData);
+    }
+    if (activeSorters.size > 0) {
+      handledData = this.sortGridData(handledData, activeSorters);
+      console.log("sorted", handledData);
+    }
+    return handledData;
   }
 
   render() {

@@ -1,3 +1,5 @@
+import { SET_QUERY_STORE, CHANGE_FILTER_BY_ID, SET_SORTERS } from "./consts";
+
 export interface Job {
     type: string;
     id: number;
@@ -18,10 +20,14 @@ export type MouseEventHandler = (event: React.MouseEvent) => void;
 
 export type dataValue = string | object | boolean | number;
 
+export type sortersArray = Array<boolean>;
+
 export type filterValue = string | boolean | number | null;
 
-export const SET_QUERY_STORE = "SET_QUERY_STORE";
-export const CHANGE_FILTER_BY_ID = "CHANGE_FILTER_BY_ID";
+export interface setSortersAction {
+    type: typeof SET_SORTERS;
+    payload: sortersArray;
+}
 
 export interface Filter {
     switchedOn: boolean;
@@ -37,7 +43,7 @@ export interface FilterWithId {
 
 export interface QueryStore {
     filters: Array<Filter>;
-    sorters: Array<Boolean>;
+    sorters: Array<boolean>;
     sortPredicate: boolean;
 }
 
@@ -51,4 +57,4 @@ interface setFiltersAction {
     payload: Array<Filter>
 }
 
-export type actionType = setFiltersAction | changeFilterAction;
+export type actionType = setFiltersAction | changeFilterAction | setSortersAction;

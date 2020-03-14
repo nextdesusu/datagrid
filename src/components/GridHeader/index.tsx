@@ -2,18 +2,27 @@ import * as React from "react";
 import { connect, ConnectedProps } from "react-redux";
 import Select from "react-select";
 
-import { changeFilterById } from "../../actions";
-import { title, Filter, filterValue, QueryStore, option } from "../../types";
+import { changeFilterById, setSortersArray } from "../../actions";
+import {
+  title,
+  Filter,
+  filterValue,
+  QueryStore,
+  option,
+  sortersArray
+} from "../../types";
 import GridHeaderCell from "../GridHeaderCell";
 import "./GridHeader.css";
 import { FixedSizeGrid } from "react-window";
 
 const mapState = (state: QueryStore) => ({
-  filters: state.filters
+  filters: state.filters,
+  sorters: state.sorters
 });
 
 const mapDispatch = {
-  setFilter: (id: number, filter: Filter) => changeFilterById(id, filter)
+  setFilter: (id: number, filter: Filter) => changeFilterById(id, filter),
+  setSorters: (sorters: sortersArray) => setSortersArray(sorters)
 };
 
 const connector = connect(mapState, mapDispatch);
@@ -27,9 +36,7 @@ type Props = PropsFromRedux & {
 };
 
 class GridHeader extends React.Component<Props> {
-
   onClickHandler = (event: React.MouseEvent): void => {
-    console.log("click");
     event.preventDefault();
     //Close all here!
     const target = event.target as Element;
@@ -41,11 +48,7 @@ class GridHeader extends React.Component<Props> {
       newFilter.value = !newFilter.value;
       setFilter(id, newFilter);
     }
-    if (
-      inputType !== null ||
-      target.hasAttribute("data-cell-checkbox")
-    )
-      return;
+    if (inputType !== null || target.hasAttribute("data-cell-checkbox")) return;
     let stop: number = 0;
     const maxStep: number = 20;
     let div: Element | null | undefined = target;
@@ -94,11 +97,16 @@ class GridHeader extends React.Component<Props> {
   };
 
   sortersHanler = (optionsList: any) => {
-    console.log(optionsList);
-  };
-
-  filtersHandler = (optionsList: any) => {
-    console.log(optionsList);
+    if (optionsList === null) return;
+    const { setSorters, sorters } = this.props;
+    const activeSorters = new Set();
+    for (let opt of optionsList) {
+      activeSorters.add(opt.value);
+    }
+    const newSorters: Array<boolean> = sorters.map((_: any, index: number) =>
+      activeSorters.has(index)
+    );
+    setSorters(newSorters);
   };
 
   get options(): Array<option> {
@@ -135,22 +143,24 @@ class GridHeader extends React.Component<Props> {
           className="grid-header-items"
           style={{ top: height, width: blockWidth, height }}
         >
-          {titles.map(({ label, componentType, options }: title, index: number) => {
-            const key = `hc: ${index}`;
-            const filter = filters[index];
-            return (
-              <GridHeaderCell
-                key={key}
-                style={{left: width * index, width, height, top: height}}
-                componentType={componentType}
-                id={index}
-                state={filter}
-                options={options}
-              >
-                {label}
-              </GridHeaderCell>
-            );
-          })}
+          {titles.map(
+            ({ label, componentType, options }: title, index: number) => {
+              const key = `hc: ${index}`;
+              const filter = filters[index];
+              return (
+                <GridHeaderCell
+                  key={key}
+                  style={{ left: width * index, width, height, top: height }}
+                  componentType={componentType}
+                  id={index}
+                  state={filter}
+                  options={options}
+                >
+                  {label}
+                </GridHeaderCell>
+              );
+            }
+          )}
         </div>
       </div>
     );

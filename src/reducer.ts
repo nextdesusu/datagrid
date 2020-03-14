@@ -1,4 +1,6 @@
-import { SET_QUERY_STORE, CHANGE_FILTER_BY_ID, QueryStore, actionType } from './types';
+import { QueryStore, actionType } from './types';
+import { SET_QUERY_STORE, CHANGE_FILTER_BY_ID, SET_SORTERS } from "./consts";
+
 
 const initialState: QueryStore = {
     filters: [],
@@ -19,6 +21,8 @@ export default function reducer(state: QueryStore = initialState, action: action
                     return filterItem;
                 })
             };
+        case SET_SORTERS:
+            return { ...state, sorters: action.payload };
         default:
             return state;
     }
