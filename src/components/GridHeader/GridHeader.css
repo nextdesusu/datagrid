@@ -3,7 +3,24 @@
   will-change: transform;
   direction: ltr;
   width: 100%;
-  position: relative; z-index: 1000;
+  position: relative;
+  z-index: 1000;
+  user-select: none;
+}
+
+.grid-header-sort__block {
+  display: flex;
+}
+
+.grid-header-select {
+  margin-right: 1em;
+}
+
+.grid-header-select__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .grid-header-items {
@@ -11,3 +28,26 @@
   top: 0;
   left: 0;
 }
+
+.sorter-predicate-button {
+  padding: 0.1em;
+  transition: transform 0.3s;
+  background-color: rgba(0, 0, 0, 0);
+  cursor: pointer;
+  border: none;
+  font-size: 1.5em;
+}
+
+.button-down {
+  transform: rotate(90deg);
+}
+
+.button-up {
+  transform: rotate(-90deg);
+}
+
+.sorter-predicate-sign {
+  display: block;
+  font-size: 0.8em;
+}
+

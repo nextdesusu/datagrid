@@ -2,7 +2,11 @@ import * as React from "react";
 import { connect, ConnectedProps } from "react-redux";
 import Select from "react-select";
 
-import { changeFilterById, setSortersArray } from "../../actions";
+import {
+  changeFilterById,
+  setSortersArray,
+  setSortPredicate
+} from "../../actions";
 import {
   title,
   Filter,
@@ -13,16 +17,17 @@ import {
 } from "../../types";
 import GridHeaderCell from "../GridHeaderCell";
 import "./GridHeader.css";
-import { FixedSizeGrid } from "react-window";
 
 const mapState = (state: QueryStore) => ({
   filters: state.filters,
-  sorters: state.sorters
+  sorters: state.sorters,
+  sortPredicate: state.sortPredicate
 });
 
 const mapDispatch = {
   setFilter: (id: number, filter: Filter) => changeFilterById(id, filter),
-  setSorters: (sorters: sortersArray) => setSortersArray(sorters)
+  setSorters: (sorters: sortersArray) => setSortersArray(sorters),
+  setPredicate: (newPred: boolean) => setSortPredicate(newPred)
 };
 
 const connector = connect(mapState, mapDispatch);
@@ -60,7 +65,7 @@ class GridHeader extends React.Component<Props> {
     }
     const id: number = Number(div?.getAttribute("data-cell-id"));
     const { setFilter, filters } = this.props;
-    const newFilter: Filter | undefined = filters[id];
+    const newFilter: Filter | undefined = { ...filters[id] };
     if (newFilter === undefined) return;
     newFilter.switchedOn = !newFilter.switchedOn;
     setFilter(id, newFilter);
@@ -96,17 +101,20 @@ class GridHeader extends React.Component<Props> {
     setFilter(id, newFilter);
   };
 
+  sortPredHandler = () => {
+    const { sortPredicate, setPredicate } = this.props;
+    setPredicate(!sortPredicate);
+  };
+
   sortersHanler = (optionsList: any) => {
-    if (optionsList === null) return;
-    const { setSorters, sorters } = this.props;
-    const activeSorters = new Set();
-    for (let opt of optionsList) {
-      activeSorters.add(opt.value);
+    const { setSorters } = this.props;
+    if (optionsList === null) {
+      const empty: Array<number> = [];
+      setSorters(empty);
+      return;
     }
-    const newSorters: Array<boolean> = sorters.map((_: any, index: number) =>
-      activeSorters.has(index)
-    );
-    setSorters(newSorters);
+    const activeSorters = optionsList.map(({ value }: any) => value);
+    setSorters(activeSorters);
   };
 
   get options(): Array<option> {
@@ -118,9 +126,15 @@ class GridHeader extends React.Component<Props> {
   }
 
   render() {
-    const { width, height, titles, filters } = this.props;
+    const { width, height, titles, filters, sortPredicate } = this.props;
     const options = this.options;
     const blockWidth: number = width * titles.length;
+    const selectStyles = {
+      container: (provided: any) => ({
+        ...provided,
+        width: width * (titles.length - 1)
+      })
+    };
     return (
       <div
         className="grid-header"
@@ -135,9 +149,22 @@ class GridHeader extends React.Component<Props> {
             options={options}
             onChange={this.sortersHanler}
             placeholder="Sort by..."
-            className="basic-multi-select"
-            classNamePrefix="select"
+            className="grid-header-select"
+            styles={selectStyles}
           />
+          <div className="grid-header-arrow-wrapper">
+            <div className="grid-header-select__toggle" style={{ width }}>
+              <button
+                className={`sorter-predicate-button ${
+                  sortPredicate ? "button-up" : "button-down"
+                }`}
+                onClick={this.sortPredHandler}
+              >
+                &#8658;
+              </button>
+              <span className="sorter-predicate-sign">Sorting: {sortPredicate ? "up" : "down"}</span>
+            </div>
+          </div>
         </div>
         <div
           className="grid-header-items"

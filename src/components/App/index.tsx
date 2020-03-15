@@ -4,20 +4,20 @@ import { connect, ConnectedProps } from "react-redux";
 import { LSload } from "../../localStorage";
 import data from "../../data";
 import { titleList, COLUMNS } from "../../consts";
-import { QueryStore, Filter, dataValue, sortersArray } from "../../types";
-import { setFiltersArray, setSortersArray } from "../../actions";
+import { QueryStore, Filter, dataValue, loadedStore } from "../../types";
+import { setQuyeryStore } from "../../actions";
 import Header from "../Header";
 import Main from "../Main";
 import Grid from "../Grid";
 
 const mapState = (state: QueryStore) => ({
   filters: state.filters,
-  sorters: state.sorters
+  sorters: state.sorters,
+  sortPredicate: state.sortPredicate,
 });
 
 const mapDispatch = {
-  setFilters: (newArray: Array<Filter>) => setFiltersArray(newArray),
-  setSorters: (sorters: sortersArray) => setSortersArray(sorters)
+  setStore: (newStore: QueryStore | null) => setQuyeryStore(newStore),
 };
 
 const connector = connect(mapState, mapDispatch);
@@ -26,11 +26,11 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 class App extends React.Component<PropsFromRedux> {
   componentDidMount() {
-    const { setFilters, setSorters } = this.props;
-    const loadedFilters: Array<Filter> | null = LSload();
-    if (false) {
+    const { setStore } = this.props;
+    const loaded: loadedStore = LSload();
+    if (loaded.succes) {
+      setStore(loaded?.store)
     } else {
-      const sorters = titleList.map(() => false);
       const filtersArray = titleList.map(
         ({ componentType }, index): Filter => {
           const filterItem: Filter = {
@@ -61,8 +61,11 @@ class App extends React.Component<PropsFromRedux> {
           return filterItem;
         }
       );
-      setSorters(sorters);
-      setFilters(filtersArray);
+      setStore({
+        filters: filtersArray,
+        sorters: [],
+        sortPredicate: false,
+      })
     }
   }
 
@@ -99,13 +102,28 @@ class App extends React.Component<PropsFromRedux> {
     return gridData.filter(dataRow => this.isValid(activeFilters, dataRow));
   }
 
+  getCompareFunction() {
+    const upCompare = (a: dataValue, b: dataValue): number => {
+      return a > b ? 1 : -1;
+    }
+
+    const downCompare = (a: dataValue, b: dataValue): number => {
+      return a < b ? 1 : -1;
+    }
+
+    const { sortPredicate } = this.props;
+    if (sortPredicate) return upCompare;
+    return downCompare;
+  }
+
   sortGridData(gridData: Array<Array<dataValue>>, activeSorters: any) {
-    //const compareFunction = () => true;
-    return gridData.sort(
+    const compare = this.getCompareFunction();
+    const newData = [...gridData];
+    return newData.sort(
       (prevRow: Array<dataValue>, currentRow: Array<dataValue>) => {
         const sum: Array<number> = [];
         for (let srtNumber of activeSorters) {
-          sum.push(prevRow[srtNumber] > currentRow[srtNumber] ? 1 : -1);
+          sum.push(compare(prevRow[srtNumber], currentRow[srtNumber]));
         }
         return sum.reduce((prev: number, current: number) => prev - current, 0);
       }
@@ -120,18 +138,12 @@ class App extends React.Component<PropsFromRedux> {
       filterItem => filterItem.switchedOn
     );
 
-    const activeSorters = new Set();
-    sorters.forEach((value: boolean, index: number) => {
-      if (value) activeSorters.add(index);
-    });
-
     if (activeFilters.length > 0) {
       handledData = this.filterGridData(data, activeFilters);
-      console.log("filtered:", handledData);
     }
-    if (activeSorters.size > 0) {
-      handledData = this.sortGridData(handledData, activeSorters);
-      console.log("sorted", handledData);
+
+    if (sorters.length > 0) {
+      handledData = this.sortGridData(handledData, sorters);
     }
     return handledData;
   }
@@ -140,12 +152,13 @@ class App extends React.Component<PropsFromRedux> {
     const width: number = 1000;
     const height: number = 400;
     const rowHeight: number = 60;
+    const hadledData = this.handledGridData;
     return (
       <>
         <Header>list of employees</Header>
         <Main>
           <Grid
-            data={this.handledGridData}
+            data={hadledData}
             titles={titleList}
             width={width}
             height={height}

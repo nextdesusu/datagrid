@@ -3,7 +3,7 @@ import { ROWS, JOBS } from "./consts";
 
 type column = string | number | object | boolean;
 
-const data: Array<Array<column>> = new Array(10);
+const data: Array<Array<column>> = new Array(ROWS);
 
 for (let i: number = 0; i < data.length; i++) {
     data[i] = [

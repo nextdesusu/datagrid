@@ -1,4 +1,10 @@
-import { SET_QUERY_STORE, CHANGE_FILTER_BY_ID, SET_SORTERS } from "./consts";
+import {
+    SET_QUERY_STORE,
+    CHANGE_FILTER_BY_ID,
+    SET_SORTERS,
+    SET_STORE,
+    SET_SORT_PRED
+} from "./consts";
 
 export interface Job {
     type: string;
@@ -13,14 +19,14 @@ export interface option {
 export interface title {
     label: string;
     componentType: string;
-    options?:  Array<any>;
+    options?: Array<any>;
 }
 
 export type MouseEventHandler = (event: React.MouseEvent) => void;
 
 export type dataValue = string | object | boolean | number;
 
-export type sortersArray = Array<boolean>;
+export type sortersArray = Array<number>;
 
 export type filterValue = string | boolean | number | null;
 
@@ -43,8 +49,18 @@ export interface FilterWithId {
 
 export interface QueryStore {
     filters: Array<Filter>;
-    sorters: Array<boolean>;
+    sorters: sortersArray;
     sortPredicate: boolean;
+}
+
+export interface setSortPredicateAction {
+    type: typeof SET_SORT_PRED;
+    payload: boolean;
+}
+
+export interface setStoreAction {
+    type: typeof SET_STORE;
+    payload: QueryStore | null;
 }
 
 interface changeFilterAction {
@@ -57,4 +73,13 @@ interface setFiltersAction {
     payload: Array<Filter>
 }
 
-export type actionType = setFiltersAction | changeFilterAction | setSortersAction;
+export interface loadedStore {
+    succes: boolean;
+    store: QueryStore | null;
+}
+
+export type actionType = setFiltersAction |
+    changeFilterAction |
+    setSortersAction |
+    setStoreAction |
+    setSortPredicateAction;

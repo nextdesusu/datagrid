@@ -3,12 +3,20 @@
     left: 0px;
     top: 0px;
     text-transform: capitalize;
-    text-align: center;
+    text-align: start;
     cursor: pointer;
     background-color: white;
     display: grid;
-    background-color: rgba(128, 128, 128, 0.5);
+    background-color: #fafafa;
     z-index: 1;
+    padding: 0.1em;
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
+    transition: background-color .3s;
+}
+
+.cell-header:hover {
+    background-color: #c9c2c2;
 }
 
 .cell-header-input {

@@ -1,11 +1,13 @@
 import { Job, title } from './types';
 
-export const ROWS = 1500;
+export const ROWS = 1100;
 export const COLUMNS = 7;
 
 export const SET_QUERY_STORE = "SET_QUERY_STORE";
 export const CHANGE_FILTER_BY_ID = "CHANGE_FILTER_BY_ID";
 export const SET_SORTERS = "SET_SORTERS";
+export const SET_STORE = "SET_STORE";
+export const SET_SORT_PRED = "SET_SORT_PRED";
 
 export const JOBS: Array<Job> = [
     { type: "coordinator", id: 0 },

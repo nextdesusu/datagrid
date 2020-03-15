@@ -1,5 +1,5 @@
-import { actionType, Filter, sortersArray } from './types';
-import { SET_QUERY_STORE, CHANGE_FILTER_BY_ID, SET_SORTERS } from "./consts";
+import { actionType, Filter, sortersArray, QueryStore } from './types';
+import { SET_QUERY_STORE, CHANGE_FILTER_BY_ID, SET_SORTERS, SET_STORE, SET_SORT_PRED } from "./consts";
 
 export function setFiltersArray(filters: Array<Filter>): actionType {
     return {
@@ -19,5 +19,20 @@ export function setSortersArray(sorters: sortersArray): actionType {
     return {
         type: SET_SORTERS,
         payload: sorters,
+    }
+}
+
+export function setQuyeryStore(store: QueryStore | null): actionType {
+    if (store === null) throw Error("Store is null!");
+    return {
+        type: SET_STORE,
+        payload: store,
+    }
+}
+
+export function setSortPredicate(pred: boolean): actionType {
+    return {
+        type: SET_SORT_PRED,
+        payload: pred,
     }
 }

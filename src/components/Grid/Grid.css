@@ -4,4 +4,7 @@
 
 .grid-wrapper {
     z-index: 3;
+    display: grid;
+    grid-template-rows: auto auto;
+    grid-gap: 0.6em;
 }
