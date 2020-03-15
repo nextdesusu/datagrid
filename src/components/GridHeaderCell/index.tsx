@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Filter } from "../../types";
+import Select from "react-select";
 
 import "./GridHeaderCell.css";
 
@@ -22,9 +23,10 @@ class GridHeaderCell extends React.Component<GridHeaderCellProps> {
           <select
             data-cell-input-type={componentType}
             data-cell-input-id={id}
-            className="cell-header-input"
+            className="cell-header-input cell-header-enum"
             value={selected}
             onChange={() => {}}
+            size={1}
           >
             {options?.map(({ type, id }, index) => {
               const key = `option ${index}`;
@@ -55,6 +57,7 @@ class GridHeaderCell extends React.Component<GridHeaderCellProps> {
             data-cell-input-id={id}
             className="cell-header-input"
             defaultValue={(state?.value as string) || ""}
+            placeholder="Search..."
           />
         );
     }
@@ -77,6 +80,7 @@ class GridHeaderCell extends React.Component<GridHeaderCellProps> {
         >
           {this.getInputComponent()}
         </div>
+        {!state?.switchedOn && <span className="cell-header-search">&#128270;</span>}
       </div>
     );
   }

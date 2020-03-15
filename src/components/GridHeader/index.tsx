@@ -125,6 +125,14 @@ class GridHeader extends React.Component<Props> {
     }));
   }
 
+  get selectValues() {
+    const { sorters, titles } = this.props;
+    return sorters.map(sorterItem => ({
+      label: titles[sorterItem].label,
+      value: sorterItem
+    }));
+  }
+
   render() {
     const { width, height, titles, filters, sortPredicate } = this.props;
     const options = this.options;
@@ -135,6 +143,7 @@ class GridHeader extends React.Component<Props> {
         width: width * (titles.length - 1)
       })
     };
+    const selectValues = this.selectValues;
     return (
       <div
         className="grid-header"
@@ -147,6 +156,7 @@ class GridHeader extends React.Component<Props> {
             isMulti
             name="colors"
             options={options}
+            value={selectValues}
             onChange={this.sortersHanler}
             placeholder="Sort by..."
             className="grid-header-select"
@@ -162,7 +172,9 @@ class GridHeader extends React.Component<Props> {
               >
                 &#8658;
               </button>
-              <span className="sorter-predicate-sign">Sorting: {sortPredicate ? "up" : "down"}</span>
+              <span className="sorter-predicate-sign">
+                Sorting: {sortPredicate ? "up" : "down"}
+              </span>
             </div>
           </div>
         </div>
