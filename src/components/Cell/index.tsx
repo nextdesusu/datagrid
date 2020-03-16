@@ -14,7 +14,7 @@ class Cell extends PureComponent<GridChildComponentProps> {
         className = `${className} c-string`;
         break;
       case "number":
-        finalValue = String(value);
+        finalValue = value.toLocaleString();
         className = `${className} c-number`;
         break;
       case "boolean":
@@ -38,9 +38,14 @@ class Cell extends PureComponent<GridChildComponentProps> {
 
   render() {
     const { columnIndex, rowIndex, data, style } = this.props;
-    const value = data[rowIndex][columnIndex];
+    const value = data.data[rowIndex][columnIndex];
+    const selected: boolean = Boolean(data.selected[columnIndex]);
     return (
-      <div className="cell-wrapper" style={style}>
+      <div
+        data-column-index={columnIndex}
+        className={`cell-wrapper ${selected && "cell-selected"}`}
+        style={style}
+      >
         {this.getComponent(value)}
       </div>
     );
