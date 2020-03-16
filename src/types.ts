@@ -28,7 +28,7 @@ export type dataValue = string | object | boolean | number;
 
 export type sortersArray = Array<number>;
 
-export type filterValue = string | boolean | number | null;
+export type filterValue = string | boolean | Array<number> | number | null;
 
 export interface setSortersAction {
     type: typeof SET_SORTERS;

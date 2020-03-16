@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Filter } from "../../types";
-import Select from "react-select";
 
 import "./GridHeaderCell.css";
 
@@ -10,7 +9,7 @@ interface GridHeaderCellProps {
   children: string;
   id: number;
   options?: Array<any>;
-  state?: Filter;
+  state?: any;
 }
 
 class GridHeaderCell extends React.Component<GridHeaderCellProps> {
@@ -18,25 +17,34 @@ class GridHeaderCell extends React.Component<GridHeaderCellProps> {
     const { componentType, state, options, id } = this.props;
     switch (componentType) {
       case "enum":
-        const selected = String((state?.value as string) || "0");
+        const valuseObj = state?.value;
+        const selected: Array<string> = Object.keys(valuseObj);
         return (
           <select
             data-cell-input-type={componentType}
             data-cell-input-id={id}
             className="cell-header-input cell-header-enum"
-            value={selected}
+            defaultValue={selected}
             onChange={() => {}}
-            size={1}
+            multiple
           >
             {options?.map(({ type, id }, index) => {
               const key = `option ${index}`;
               const value: string = String(id);
               return (
-                <option key={key} value={value}>
-                  {type}
+                <option
+                  data-cell-option
+                  key={key}
+                  value={value}
+                  className={`${
+                    valuseObj[value] === true ? "option-selected" : ""
+                  }`}
+                >
+                  {type}{valuseObj[value] === true && "☆"}
                 </option>
               );
             })}
+            <option data-cell-option-close className="option-apply">Apply!</option>
           </select>
         );
       case "bool":
@@ -80,7 +88,9 @@ class GridHeaderCell extends React.Component<GridHeaderCellProps> {
         >
           {this.getInputComponent()}
         </div>
-        {!state?.switchedOn && <span className="cell-header-search">&#128270;</span>}
+        {!state?.switchedOn && (
+          <span className="cell-header-search">&#128270;</span>
+        )}
       </div>
     );
   }

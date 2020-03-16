@@ -4,7 +4,7 @@ import { FixedSizeGrid } from "react-window";
 import { title } from "../../types";
 import Cell from "../Cell";
 import GridHeader from "../GridHeader";
-import './Grid.css';
+import "./Grid.css";
 
 interface GridProps {
   data: Array<Array<string | number | boolean | object>>;
@@ -15,16 +15,19 @@ interface GridProps {
   columnCount: number;
 }
 
-const Grid = ({ data, titles, width, height, rowHeight, columnCount }: GridProps) => {
+const Grid = ({
+  data,
+  titles,
+  width,
+  height,
+  rowHeight,
+  columnCount
+}: GridProps) => {
   const rowCount: number = data.length;
   const columnWidth: number = Math.floor(width / columnCount);
   return (
     <section className="grid-wrapper">
-      <GridHeader
-        width={columnWidth}
-        height={rowHeight}
-        titles={titles}
-      />
+      <GridHeader width={columnWidth} height={rowHeight} titles={titles} />
       <FixedSizeGrid
         rowCount={rowCount}
         columnCount={columnCount}

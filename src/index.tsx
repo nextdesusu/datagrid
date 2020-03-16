@@ -14,7 +14,6 @@ const store = createStore(reducer);
 store.subscribe(() => {
     const state = store.getState();
     LSsave(state);
-    console.log("state:", state);
 });
 
 export default store;

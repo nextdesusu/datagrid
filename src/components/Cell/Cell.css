@@ -15,8 +15,8 @@
     padding: 0 1em;
 }
 
-.cell-first {
-    
+.c-date {
+    font-weight: bold;
 }
 
 .c-title {
@@ -26,6 +26,11 @@
 .c-number, .c-boolean {
     justify-content: center;
     padding: 0;
+}
+
+.c-number {
+    color: gray;
+    text-decoration: underline;
 }
 
 .b-positive {

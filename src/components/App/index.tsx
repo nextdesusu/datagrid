@@ -1,11 +1,23 @@
 import * as React from "react";
 import { connect, ConnectedProps } from "react-redux";
 
+import exportAsCSV from "../../exportAsCSV";
 import { LSload } from "../../localStorage";
 import data from "../../data";
 import { titleList, COLUMNS } from "../../consts";
-import { QueryStore, Filter, dataValue, loadedStore } from "../../types";
-import { setQuyeryStore } from "../../actions";
+import {
+  QueryStore,
+  Filter,
+  dataValue,
+  loadedStore,
+  sortersArray
+} from "../../types";
+import {
+  setQuyeryStore,
+  changeFilterById,
+  setSortPredicate,
+  setSortersArray
+} from "../../actions";
 import Header from "../Header";
 import Main from "../Main";
 import Grid from "../Grid";
@@ -13,11 +25,14 @@ import Grid from "../Grid";
 const mapState = (state: QueryStore) => ({
   filters: state.filters,
   sorters: state.sorters,
-  sortPredicate: state.sortPredicate,
+  sortPredicate: state.sortPredicate
 });
 
 const mapDispatch = {
   setStore: (newStore: QueryStore | null) => setQuyeryStore(newStore),
+  setFilter: (id: number, newFilter: Filter) => changeFilterById(id, newFilter),
+  setSorters: (newSorters: sortersArray) => setSortersArray(newSorters),
+  setPredicate: (pred: boolean) => setSortPredicate(pred)
 };
 
 const connector = connect(mapState, mapDispatch);
@@ -29,7 +44,7 @@ class App extends React.Component<PropsFromRedux> {
     const { setStore } = this.props;
     const loaded: loadedStore = LSload();
     if (loaded.succes) {
-      setStore(loaded?.store)
+      setStore(loaded?.store);
     } else {
       const filtersArray = titleList.map(
         ({ componentType }, index): Filter => {
@@ -53,7 +68,7 @@ class App extends React.Component<PropsFromRedux> {
               filterItem.value = 5;
               break;
             case "enum":
-              filterItem.value = 0;
+              filterItem.value = [0];
               break;
             default:
               throw Error(`Unknown component: ${componentType}`);
@@ -64,8 +79,8 @@ class App extends React.Component<PropsFromRedux> {
       setStore({
         filters: filtersArray,
         sorters: [],
-        sortPredicate: false,
-      })
+        sortPredicate: false
+      });
     }
   }
 
@@ -78,7 +93,8 @@ class App extends React.Component<PropsFromRedux> {
           valid = rowItem.toLowerCase().indexOf(value) !== -1;
           break;
         case "enum":
-          valid = value === rowItem.id;
+          const ids = value as Array<number>;
+          valid = ids?.indexOf(rowItem.id) !== -1;
           break;
         case "date":
           valid =
@@ -105,11 +121,11 @@ class App extends React.Component<PropsFromRedux> {
   getCompareFunction() {
     const upCompare = (a: dataValue, b: dataValue): number => {
       return a > b ? 1 : -1;
-    }
+    };
 
     const downCompare = (a: dataValue, b: dataValue): number => {
       return a < b ? 1 : -1;
-    }
+    };
 
     const { sortPredicate } = this.props;
     if (sortPredicate) return upCompare;
@@ -148,6 +164,12 @@ class App extends React.Component<PropsFromRedux> {
     return handledData;
   }
 
+  getCSV = () => {
+    const data = this.handledGridData;
+    const titlesHandled = titleList.map((title) => title.label);
+    exportAsCSV("list_of_employes.csv", [titlesHandled, ...data]);
+  };
+
   render() {
     const width: number = 1000;
     const height: number = 400;
@@ -165,6 +187,7 @@ class App extends React.Component<PropsFromRedux> {
             rowHeight={rowHeight}
             columnCount={COLUMNS}
           />
+          <button onClick={this.getCSV} className="button-getCSV">get as csv</button>
         </Main>
       </>
     );
