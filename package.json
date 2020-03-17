@@ -20,6 +20,7 @@
     "react-select": "^3.0.8",
     "react-window": "^1.8.5",
     "redux": "^4.0.5",
+    "redux-devtools-extension": "^2.13.8",
     "source-map-loader": "^0.2.4",
     "ts-loader": "^6.2.1",
     "typescript": "^3.8.3"
