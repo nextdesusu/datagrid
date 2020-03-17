@@ -3,7 +3,9 @@ import {
     CHANGE_FILTER_BY_ID,
     SET_SORTERS,
     SET_STORE,
-    SET_SORT_PRED
+    SET_SORT_PRED,
+    TOGGLE_SELECTED,
+    UNSELECT_ALL
 } from "./consts";
 
 export interface Job {
@@ -30,6 +32,8 @@ export type sortersArray = Array<number>;
 
 export type filterValue = string | boolean | Array<number> | number | null;
 
+type selectedObject = { [key: number]: boolean };
+
 export interface setSortersAction {
     type: typeof SET_SORTERS;
     payload: sortersArray;
@@ -40,6 +44,7 @@ export interface Filter {
     type: string;
     id: number;
     value: filterValue;
+    enumValues?: Array<boolean>;
 }
 
 export interface FilterWithId {
@@ -51,6 +56,7 @@ export interface QueryStore {
     filters: Array<Filter>;
     sorters: sortersArray;
     sortPredicate: boolean;
+    selected: selectedObject;
 }
 
 export interface setSortPredicateAction {
@@ -61,6 +67,16 @@ export interface setSortPredicateAction {
 export interface setStoreAction {
     type: typeof SET_STORE;
     payload: QueryStore | null;
+}
+
+export interface toggleSelected {
+    type: typeof TOGGLE_SELECTED;
+    payload: number;
+}
+
+export interface unselectAll {
+    type: typeof UNSELECT_ALL;
+    payload: null;
 }
 
 interface changeFilterAction {
@@ -82,4 +98,6 @@ export type actionType = setFiltersAction |
     changeFilterAction |
     setSortersAction |
     setStoreAction |
-    setSortPredicateAction;
+    setSortPredicateAction |
+    toggleSelected |
+    unselectAll;

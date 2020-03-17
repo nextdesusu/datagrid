@@ -14,22 +14,14 @@ interface GridProps {
   height: number;
   rowHeight: number;
   columnCount: number;
+  selected: any;
+  toggleSelected: any;
+  unselectAll: any;
 }
 
-interface GridState {
-  selected: { [key: number]: boolean };
-}
-
-class Grid extends React.Component<GridProps, GridState> {
-  constructor(props: GridProps) {
-    super(props);
-    this.state = {
-      selected: {}
-    };
-  }
-
+class Grid extends React.Component<GridProps> {
   handleOnclick = (event: React.MouseEvent) => {
-    const { selected } = this.state;
+    const { toggleSelected, unselectAll } = this.props;
     const target: Element = event.target as Element;
     let neededElement: Element | null | undefined = target;
     while (!neededElement?.hasAttribute("data-column-index")) {
@@ -37,27 +29,16 @@ class Grid extends React.Component<GridProps, GridState> {
       neededElement = neededElement?.parentElement;
     }
     const id: number = Number(neededElement.getAttribute("data-column-index"));
-    if (!selected[id]) {
-      if (event.shiftKey) {
-        const newSelected = { ...selected };
-        newSelected[id] = true;
-        this.setState({ selected: newSelected });
-      } else {
-        this.setState({ selected: { [id]: true } });
-      }
+    if (event.shiftKey) {
+      toggleSelected(id);
     } else {
-      if (event.shiftKey) {
-        const newSelected = { ...selected };
-        delete newSelected[id];
-        this.setState({ selected: newSelected });
-      } else {
-        this.setState({ selected: {} });
-      }
+      unselectAll();
+      toggleSelected(id);
     }
   };
 
   handleData() {
-    const { selected } = this.state;
+    const { selected } = this.props;
     const { data } = this.props;
     return data.map((dataColumn: any) =>
       dataColumn.filter((columnItem: any, index: number) => index in selected)
@@ -65,8 +46,7 @@ class Grid extends React.Component<GridProps, GridState> {
   }
 
   getChoosenCSV = () => {
-    const { selected } = this.state;
-    const { titles } = this.props;
+    const { selected, titles } = this.props;
     const titlesHandled = titles
       .filter((titleItem: any, index: number) => index in selected)
       .map(title => title.label);
@@ -75,8 +55,15 @@ class Grid extends React.Component<GridProps, GridState> {
   };
 
   render() {
-    const { data, titles, width, height, rowHeight, columnCount } = this.props;
-    const { selected } = this.state;
+    const {
+      data,
+      titles,
+      width,
+      height,
+      rowHeight,
+      columnCount,
+      selected
+    } = this.props;
     const rowCount: number = data.length;
     const columnWidth: number = Math.floor(width / columnCount);
     const disableConditon = Object.keys(selected).length < 1;

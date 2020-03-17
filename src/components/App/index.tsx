@@ -16,7 +16,9 @@ import {
   setQuyeryStore,
   changeFilterById,
   setSortPredicate,
-  setSortersArray
+  setSortersArray,
+  toggleSelectedAction,
+  unselectAllAction
 } from "../../actions";
 import Header from "../Header";
 import Main from "../Main";
@@ -25,14 +27,17 @@ import Grid from "../Grid";
 const mapState = (state: QueryStore) => ({
   filters: state.filters,
   sorters: state.sorters,
-  sortPredicate: state.sortPredicate
+  sortPredicate: state.sortPredicate,
+  selected: state.selected
 });
 
 const mapDispatch = {
   setStore: (newStore: QueryStore | null) => setQuyeryStore(newStore),
   setFilter: (id: number, newFilter: Filter) => changeFilterById(id, newFilter),
   setSorters: (newSorters: sortersArray) => setSortersArray(newSorters),
-  setPredicate: (pred: boolean) => setSortPredicate(pred)
+  setPredicate: (pred: boolean) => setSortPredicate(pred),
+  toggleSelected: (id: number) => toggleSelectedAction(id),
+  unselectAll: () => unselectAllAction()
 };
 
 const connector = connect(mapState, mapDispatch);
@@ -47,7 +52,7 @@ class App extends React.Component<PropsFromRedux> {
       setStore(loaded?.store);
     } else {
       const filtersArray = titleList.map(
-        ({ componentType }, index): Filter => {
+        ({ componentType, options }, index): Filter => {
           const filterItem: Filter = {
             switchedOn: false,
             value: null,
@@ -68,7 +73,7 @@ class App extends React.Component<PropsFromRedux> {
               filterItem.value = 5;
               break;
             case "enum":
-              filterItem.value = [0];
+              filterItem.enumValues = options?.map(() => true);
               break;
             default:
               throw Error(`Unknown component: ${componentType}`);
@@ -79,13 +84,14 @@ class App extends React.Component<PropsFromRedux> {
       setStore({
         filters: filtersArray,
         sorters: [],
-        sortPredicate: false
+        sortPredicate: false,
+        selected: {}
       });
     }
   }
 
   isValid(activeFilters: Array<Filter>, row: Array<dataValue>): boolean {
-    for (let { type, value, id } of activeFilters) {
+    for (let { type, value, id, enumValues } of activeFilters) {
       const rowItem: any = row[id];
       let valid: boolean = true;
       switch (type) {
@@ -93,7 +99,9 @@ class App extends React.Component<PropsFromRedux> {
           valid = rowItem.toLowerCase().indexOf(value) !== -1;
           break;
         case "enum":
-          const ids = value as Array<number>;
+          const ids = enumValues
+            ?.filter((enumValue: boolean) => enumValue)
+            .map((_: boolean, index: number) => index);
           valid = ids?.indexOf(rowItem.id) !== -1;
           break;
         case "date":
@@ -166,7 +174,7 @@ class App extends React.Component<PropsFromRedux> {
 
   getCSV = () => {
     const data = this.handledGridData;
-    const titlesHandled = titleList.map((title) => title.label);
+    const titlesHandled = titleList.map(title => title.label);
     exportAsCSV("list_of_employes.csv", [titlesHandled, ...data]);
   };
 
@@ -175,6 +183,7 @@ class App extends React.Component<PropsFromRedux> {
     const height: number = 400;
     const rowHeight: number = 60;
     const hadledData = this.handledGridData;
+    const { toggleSelected, selected, unselectAll } = this.props;
     return (
       <>
         <Header>list of employees</Header>
@@ -186,8 +195,13 @@ class App extends React.Component<PropsFromRedux> {
             height={height}
             rowHeight={rowHeight}
             columnCount={COLUMNS}
+            toggleSelected={toggleSelected}
+            selected={selected}
+            unselectAll={unselectAll}
           />
-          <button onClick={this.getCSV} className="button-getCSV">get as csv</button>
+          <button onClick={this.getCSV} className="button-getCSV">
+            get as csv
+          </button>
         </Main>
       </>
     );

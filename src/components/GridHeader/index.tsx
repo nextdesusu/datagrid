@@ -40,16 +40,7 @@ type Props = PropsFromRedux & {
   titles: Array<title>;
 };
 
-interface GridHeaderState {
-  enumValues: { [key: string]: boolean };
-}
-
-class GridHeader extends React.Component<Props, GridHeaderState> {
-  constructor(props: any) {
-    super(props);
-    this.state = { enumValues: {} };
-  }
-
+class GridHeader extends React.Component<Props> {
   onClickHandler = (event: React.MouseEvent): void => {
     event.preventDefault();
     const { setFilter, filters, setSorters, sorters } = this.props;
@@ -63,30 +54,22 @@ class GridHeader extends React.Component<Props, GridHeaderState> {
       newFilter.value = !newFilter.value;
       setFilter(id, newFilter);
     }
-    if (target.getAttribute("data-cell-option-close")) {
-      const { enumValues } = this.state;
-      const id: number = Number(
-        target.parentElement?.getAttribute("data-cell-input-id")
-      );
-      if (id === null) return;
-      const filterOptions = Object.keys(enumValues).map(srt => Number(srt));
-      const newFilter = filters[id];
-      newFilter.value = filterOptions;
-      setFilter(id, newFilter);
-      return;
-    }
     if (inputType !== null) return;
     if (target.hasAttribute("data-cell-option")) {
       const option: HTMLOptionElement = target as HTMLOptionElement;
-      const key: string = option?.value as string;
-      const { enumValues } = this.state;
-      if (!enumValues[key]) {
-        this.setState({ enumValues: { ...enumValues, [key]: true } });
-      } else {
-        const newEnumValues = { ...enumValues };
-        delete newEnumValues[key];
-        this.setState({ enumValues: newEnumValues });
-      }
+      const id: number = Number(
+        target?.parentElement?.getAttribute("data-cell-input-id")
+      );
+      const optionId = Number(option?.getAttribute("data-cell-option"));
+      let newFilter = filters[id];
+      newFilter = {
+        ...newFilter,
+        enumValues: newFilter.enumValues?.map((enumValue: boolean, index) => {
+          if (index === optionId) return !enumValue;
+          return enumValue;
+        })
+      };
+      setFilter(id, newFilter);
       return;
     }
     let stop: number = 0;
@@ -102,7 +85,7 @@ class GridHeader extends React.Component<Props, GridHeaderState> {
     if (event.shiftKey) {
       const isInSorters = sorters.indexOf(id) !== -1;
       if (isInSorters) {
-        setSorters(sorters.filter((sorter) => sorter !== id));
+        setSorters(sorters.filter(sorter => sorter !== id));
       } else {
         setSorters([...sorters, id]);
       }
@@ -234,14 +217,7 @@ class GridHeader extends React.Component<Props, GridHeaderState> {
                   style={{ left: width * index, width, height, top: height }}
                   componentType={componentType}
                   id={index}
-                  state={
-                    componentType === "enum"
-                      ? {
-                          value: this.state.enumValues,
-                          switchedOn: filter?.switchedOn
-                        }
-                      : filter
-                  }
+                  state={filter}
                   options={options}
                 >
                   {label}

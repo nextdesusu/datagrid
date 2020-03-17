@@ -1,5 +1,5 @@
 import { actionType, Filter, sortersArray, QueryStore } from './types';
-import { SET_QUERY_STORE, CHANGE_FILTER_BY_ID, SET_SORTERS, SET_STORE, SET_SORT_PRED } from "./consts";
+import { SET_QUERY_STORE, CHANGE_FILTER_BY_ID, SET_SORTERS, SET_STORE, SET_SORT_PRED, TOGGLE_SELECTED, UNSELECT_ALL } from "./consts";
 
 export function setFiltersArray(filters: Array<Filter>): actionType {
     return {
@@ -11,7 +11,7 @@ export function setFiltersArray(filters: Array<Filter>): actionType {
 export function changeFilterById(id: number, filter: Filter): actionType {
     return {
         type: CHANGE_FILTER_BY_ID,
-        payload: {id, value: filter},
+        payload: { id, value: filter },
     }
 }
 
@@ -34,5 +34,19 @@ export function setSortPredicate(pred: boolean): actionType {
     return {
         type: SET_SORT_PRED,
         payload: pred,
+    }
+}
+
+export function toggleSelectedAction(id: number): actionType {
+    return {
+        type: TOGGLE_SELECTED,
+        payload: id,
+    }
+}
+
+export function unselectAllAction(): actionType {
+    return {
+        type: UNSELECT_ALL,
+        payload: null,
     }
 }

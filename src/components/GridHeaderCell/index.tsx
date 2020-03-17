@@ -17,14 +17,15 @@ class GridHeaderCell extends React.Component<GridHeaderCellProps> {
     const { componentType, state, options, id } = this.props;
     switch (componentType) {
       case "enum":
-        const valuseObj = state?.value;
-        const selected: Array<string> = Object.keys(valuseObj);
+        const enumValues: Array<boolean> = state?.enumValues || [];
         return (
           <select
             data-cell-input-type={componentType}
             data-cell-input-id={id}
             className="cell-header-input cell-header-enum"
-            defaultValue={selected}
+            defaultValue={enumValues
+              .filter((item: any) => item)
+              .map((item: any, index: number) => String(index))}
             onChange={() => {}}
             multiple
           >
@@ -33,18 +34,18 @@ class GridHeaderCell extends React.Component<GridHeaderCellProps> {
               const value: string = String(id);
               return (
                 <option
-                  data-cell-option
+                  data-cell-option={id}
                   key={key}
                   value={value}
                   className={`${
-                    valuseObj[value] === true ? "option-selected" : ""
+                    enumValues[id] ? "option-selected" : ""
                   }`}
                 >
-                  {type}{valuseObj[value] === true && "☆"}
+                  {type}
+                  {enumValues[id] && "☆"}
                 </option>
               );
             })}
-            <option data-cell-option-close className="option-apply">Apply!</option>
           </select>
         );
       case "bool":

@@ -8,6 +8,8 @@ export const CHANGE_FILTER_BY_ID = "CHANGE_FILTER_BY_ID";
 export const SET_SORTERS = "SET_SORTERS";
 export const SET_STORE = "SET_STORE";
 export const SET_SORT_PRED = "SET_SORT_PRED";
+export const TOGGLE_SELECTED = "TOGGLE_SELECTED";
+export const UNSELECT_ALL = "UNSELECT_ALL";
 
 export const JOBS: Array<Job> = [
     { type: "coordinator", id: 0 },
